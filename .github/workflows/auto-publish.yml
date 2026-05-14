@@ -1,9 +1,12 @@
-name: Auto-publish Scheduled Posts
+name: Auto-publish Scheduled Posts (DEPRECATED)
+
+# DEPRECATED: 이 워크플로는 더 이상 사용하지 않습니다.
+# 자동 글 생성·발행은 Vercel Cron이 담당합니다.
+#   vercel.json → /api/cron/generate-post
+# 수동으로 트리거가 필요할 때만 workflow_dispatch 로 실행하세요.
 
 on:
-  schedule:
-    - cron: '*/30 * * * *'  # 30분마다 실행
-  workflow_dispatch: # 수동 실행도 가능
+  workflow_dispatch: # 수동 실행만 가능 (스케줄 비활성화)
 
 jobs:
   publish:

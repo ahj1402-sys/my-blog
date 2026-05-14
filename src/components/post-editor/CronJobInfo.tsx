@@ -19,7 +19,7 @@ export default function CronJobInfo() {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-blue-900">자동 발행 시스템 작동 중</p>
-          <p className="text-xs text-blue-600 mt-0.5">매일 오전 10시 ~ 오후 10시, 1시간 간격으로 12개 글 발행</p>
+          <p className="text-xs text-blue-600 mt-0.5">매일 오전 9시 ~ 밤 9시, 1시간 간격으로 13편 자동 생성·발행 (Vercel Cron)</p>
         </div>
         <svg
           className={`w-4 h-4 text-blue-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
@@ -54,7 +54,7 @@ export default function CronJobInfo() {
               <div>
                 <p className="text-sm font-medium text-gray-900">자동 글 생성 & 발행</p>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  크론잡이 저장된 키워드를 기반으로 글을 생성하고, 매일 12개를 자동 발행합니다.
+                  Vercel Cron이 매시간 (9시~21시) 저장된 키워드 1개를 골라 AI로 글을 생성하고 즉시 발행합니다. 하루 최대 13편.
                 </p>
               </div>
             </div>
@@ -74,7 +74,7 @@ export default function CronJobInfo() {
             <div className="mt-4 p-3 bg-white rounded-lg border border-blue-100">
               <p className="text-xs text-gray-500">
                 <span className="font-medium text-gray-700">발행 스케줄 변경이 필요한가요?</span><br />
-                Claude Code에서 &quot;크론잡 스케줄을 변경해줘&quot;라고 요청하면 됩니다.
+                Claude Code에서 &quot;vercel.json의 cron 스케줄을 0 9-21 * * * 로 바꿔줘&quot; 처럼 요청하세요.
               </p>
             </div>
           </div>
