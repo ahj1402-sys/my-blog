@@ -1,0 +1,31 @@
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+node_modules
+.next
+.vercel
+*.log
+.DS_Store
+
+# Test files
+vitest.config.mts
+vitest.setup.mts
+**/__tests__/**
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# Scripts (exclude only unnecessary ones, keep blog generation scripts)
+scripts/analyze-shorts.mjs
+scripts/analyze-youtube-shorts.mjs
+scripts/consult-gemini-strategy.mjs
+scripts/gemini-strategy-advice.md
+scripts/populate-global-rank.ts
+scripts/check-draft-posts.ts
+scripts/check-latest-posts.ts
+
+# Coverage reports
+coverage/

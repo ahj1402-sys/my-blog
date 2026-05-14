@@ -1,0 +1,164 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id                String                      @id @default(cuid())
+  title             String
+  slug              String                      @unique
+  content           String
+  excerpt           String?
+  coverImage        String?
+  publishedAt       DateTime?
+  createdAt         DateTime                    @default(now())
+  updatedAt         DateTime                    @updatedAt
+  author            String?
+  tags              String                      @default("")
+  seoTitle          String?
+  seoDescription    String?
+  views             Int                         @default(0)
+  scheduledAt       DateTime?
+  status            PostStatus                  @default(DRAFT)
+  socialLinks       String?
+  youtubeVideoId    String?
+  threadsPostId     String?
+  originalLanguage  String                      @default("ko")
+  globalRank        Int?
+  isCornerstone     Boolean                     @default(false)
+  cornerstoneId     String?
+  cornerstone       Post?                       @relation("CornerstoneSpokes", fields: [cornerstoneId], references: [id], onDelete: SetNull)
+  spokes            Post[]                      @relation("CornerstoneSpokes")
+  comments          Comment[]
+  translations      PostTranslation[]
+  affiliateProducts PostAffiliateProduct[]
+
+  @@index([slug])
+  @@index([publishedAt])
+  @@index([status, scheduledAt])
+  @@index([globalRank])
+  @@index([threadsPostId])
+  @@index([isCornerstone])
+  @@index([cornerstoneId])
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Knowledge {
+  id        String   @id @default(cuid())
+  content   String
+  source    String?
+  embedding String?
+  createdAt DateTime @default(now())
+}
+
+model Comment {
+  id            String    @id @default(cuid())
+  postId        String
+  authorName    String
+  authorEmail   String?
+  content       String
+  aiResponse    String?
+  aiGeneratedAt DateTime?
+  agreeWithUser Int       @default(0)
+  agreeWithAI   Int       @default(0)
+  isApproved    Boolean   @default(true)
+  isDeleted     Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  parentId      String?
+  parent        Comment?  @relation("CommentToComment", fields: [parentId], references: [id])
+  replies       Comment[] @relation("CommentToComment")
+  post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([createdAt])
+  @@index([isApproved, isDeleted])
+}
+
+model PostTranslation {
+  id             String   @id @default(cuid())
+  postId         String
+  locale         String
+  title          String
+  content        String
+  excerpt        String?
+  seoTitle       String?
+  seoDescription String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  coverImage     String?
+  post           Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, locale])
+  @@index([postId])
+  @@index([locale])
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
+// 관리자 설정 (환경변수 대체)
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// 키워드 관리 (CSV 업로드 + AI 글쓰기 연동)
+model Keyword {
+  id         String   @id @default(cuid())
+  text       String
+  category   String?
+  usageCount Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([text])
+  @@index([category])
+  @@index([usageCount])
+}
+
+// 쿠팡 파트너스 제휴 상품
+model AffiliateProduct {
+  id          String                 @id @default(cuid())
+  name        String                 // 상품명
+  coupangUrl  String                 // 쿠팡 파트너스 링크
+  category    String                 // 카테고리 (전자기기, 생활용품, 건강 etc.)
+  price       Int?                   // 가격 (옵션)
+  imageUrl    String?                // 상품 이미지 URL
+  keywords    String                 @default("") // SEO 키워드 (쉼표 구분)
+  description String?                // 상품 설명
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  posts       PostAffiliateProduct[]
+
+  @@index([category])
+}
+
+// Post와 AffiliateProduct의 다대다 관계 (중간 테이블)
+model PostAffiliateProduct {
+  id                 String           @id @default(cuid())
+  postId             String
+  affiliateProductId String
+  post               Post             @relation(fields: [postId], references: [id], onDelete: Cascade)
+  affiliateProduct   AffiliateProduct @relation(fields: [affiliateProductId], references: [id], onDelete: Cascade)
+  createdAt          DateTime         @default(now())
+
+  @@unique([postId, affiliateProductId])
+  @@index([postId])
+  @@index([affiliateProductId])
+}
