@@ -1,16 +1,11 @@
 /**
  * Turso 자체-치유 마이그레이션 스크립트
  *
- * 왜 필요한가?
- * - Prisma datasource가 sqlite + DATABASE_URL=file:./dev.db로 설정돼 있어서
- *   `prisma db push`는 로컬 SQLite 파일에만 적용된다.
- * - 런타임은 @prisma/adapter-libsql로 Turso에 접속하지만, 스키마 동기화는 별개.
- * - 그래서 빌드 시 직접 Turso에 connect해서 누락된 컬럼/인덱스를 ALTER로 추가한다.
- *
  * 동작:
- * - PRAGMA table_info()로 컬럼 존재 여부 확인 후 없을 때만 ALTER TABLE
- * - 인덱스는 CREATE INDEX IF NOT EXISTS (SQLite 기본 지원)
- * - 모든 작업이 멱등(여러 번 실행해도 안전)
+ * - 기본 Post 테이블이 없으면 첫 배포로 간주하고 건너뛴다 (배포 후 /admin/setup 에서 생성).
+ * - PRAGMA table_info()로 컬럼 존재 여부 확인 후 없을 때만 ALTER TABLE.
+ * - 인덱스는 CREATE INDEX IF NOT EXISTS (SQLite 기본 지원).
+ * - 모든 작업이 멱등(여러 번 실행해도 안전).
  */
 
 try {
@@ -24,11 +19,8 @@ interface ColumnInfo {
 }
 
 interface MigrationStep {
-  /** 컬럼 추가 대상 테이블 */
   table: string
-  /** 추가할 컬럼명 */
   column: string
-  /** ALTER TABLE에 사용할 SQL 조각 (예: 'BOOLEAN NOT NULL DEFAULT false') */
   definition: string
 }
 
@@ -62,6 +54,18 @@ async function main() {
   const client = createClient({ url, authToken })
 
   console.log('\n[Turso Migrate] Turso 스키마 동기화 시작...')
+
+  // 기본 Post 테이블이 없으면 첫 배포 — 컬럼 마이그레이션 건너뛰기
+  const baseCheck = await client.execute(
+    `SELECT name FROM sqlite_master WHERE type='table' AND name='Post'`,
+  )
+  if (baseCheck.rows.length === 0) {
+    console.log('  [정보] 기본 테이블이 아직 없습니다 (첫 배포).')
+    console.log('  [안내] 배포 완료 후 /admin/setup 페이지에서 DB를 초기화하세요.')
+    client.close()
+    console.log('[Turso Migrate] 완료 (건너뜀)\n')
+    return
+  }
 
   for (const { table, column, definition } of COLUMN_MIGRATIONS) {
     const result = await client.execute(`PRAGMA table_info("${table}")`)
