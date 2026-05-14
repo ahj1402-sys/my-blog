@@ -17,7 +17,7 @@ const STEPS = [
   {
     number: 1,
     title: '브랜딩 설정',
-    description: 'Claude Cowork에서 블로그 이름과 설명을 변경합니다.',
+    description: 'Claude Code에서 블로그 이름과 설명을 변경합니다.',
   },
   {
     number: 2,
@@ -185,7 +185,7 @@ function StepContent({ stepNumber }: { stepNumber: number }) {
       return (
         <div className="pt-4 space-y-4">
           <p className="text-gray-700">
-            Claude Cowork에서 다음과 같이 말해보세요:
+            Claude Code에서 다음과 같이 말해보세요:
           </p>
           <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm">
             <p>&quot;블로그 이름을 [나의 블로그 이름]으로 바꿔줘&quot;</p>

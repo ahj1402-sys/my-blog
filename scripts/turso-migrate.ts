@@ -1,9 +1,15 @@
 /**
  * Turso 자체-치유 마이그레이션 스크립트 (v2 - 부트스트랩 지원)
  *
+ * 왜 필요한가?
+ * - Prisma datasource가 sqlite + DATABASE_URL=file:./dev.db로 설정돼 있어서
+ *   `prisma db push`는 로컬 SQLite 파일에만 적용된다.
+ * - 런타임은 @prisma/adapter-libsql로 Turso에 접속하지만, 스키마 동기화는 별개.
+ * - 그래서 빌드 시 직접 Turso에 connect해서 누락된 스키마를 보강한다.
+ *
  * 동작:
- * - Post 테이블이 없으면 기본 스키마 전체를 부트스트랩(CREATE TABLE).
- * - 기존 테이블에 누락된 컬럼이 있으면 ALTER TABLE로 추가.
+ * - Post 테이블이 없으면 기본 스키마 전체를 부트스트랩(CREATE TABLE) → 첫 배포 지원.
+ * - 기존 테이블에 누락된 컬럼이 있으면 ALTER TABLE로 추가 (기존 사용자용).
  * - 인덱스는 CREATE INDEX IF NOT EXISTS (멱등).
  * - 모든 작업이 멱등 — 여러 번 실행해도 안전.
  */

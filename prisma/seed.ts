@@ -459,11 +459,31 @@ React 19는 서버와 클라이언트의 경계를 더욱 자연스럽게 만들
 ]
 
 async function main() {
-  console.log('Seeding database with 8 dummy posts...')
+  // FORCE_SEED=true 환경변수가 있으면 강제 시드 (수동 실행 시 사용)
+  const forceSeed = process.env.FORCE_SEED === 'true'
 
-  // Clear existing posts
-  await prisma.post.deleteMany()
-  console.log('Cleared existing posts.')
+  // 빌드 시 자동 시드: 기존 글이 하나라도 있으면 건너뜀 (학생이 지운 더미를 다시 안 채움)
+  if (!forceSeed) {
+    try {
+      const existingCount = await prisma.post.count()
+      if (existingCount > 0) {
+        console.log(`[Seed] 기존 글 ${existingCount}개 발견 — 시드 건너뜀`)
+        console.log('[Seed] 강제로 시드하려면: FORCE_SEED=true tsx prisma/seed.ts')
+        return
+      }
+    } catch (error) {
+      // Post 테이블이 아직 없는 경우 → 마이그레이션 후 시드 시도
+      console.warn('[Seed] Post 테이블 조회 실패 (테이블 없음 가능):', error)
+      return
+    }
+  }
+
+  console.log(`[Seed] ${dummyPosts.length}개 더미 글 생성 시작...`)
+
+  if (forceSeed) {
+    await prisma.post.deleteMany()
+    console.log('[Seed] (FORCE) 기존 글 전부 삭제됨')
+  }
 
   // Create posts with staggered dates
   const baseDate = new Date('2025-05-01')
@@ -483,10 +503,10 @@ async function main() {
       },
     })
 
-    console.log(`  Created: ${post.title}`)
+    console.log(`  [생성] ${post.title}`)
   }
 
-  console.log('\nSeeding completed! 8 posts created.')
+  console.log(`\n[Seed] 완료! ${dummyPosts.length}개 글 생성됨.`)
 }
 
 main()

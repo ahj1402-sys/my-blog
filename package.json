@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "tsx scripts/preflight-check.ts && tsx scripts/turso-migrate.ts && prisma generate && next build && next-sitemap",
+    "build": "tsx scripts/preflight-check.ts && tsx scripts/turso-migrate.ts && prisma generate && tsx prisma/seed.ts && next build && next-sitemap",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
