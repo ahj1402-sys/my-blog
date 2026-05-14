@@ -23,10 +23,12 @@ SEO 규칙:
 3. H2/H3 계층 구조
 4. 키워드 자연스럽게 3-5회 포함
 
+slug 규칙: 영문 소문자 + 숫자 + 하이픈(-)만. 한글 금지. 60자 이내.
+
 OUTPUT FORMAT (JSON):
 {
-  "title": "SEO 최적화 제목 (60자 이내)",
-  "slug": "url-friendly-slug",
+  "title": "SEO 최적화 제목 (60자 이내, 한국어 가능)",
+  "slug": "english-only-kebab-case",
   "excerpt": "2-3문장 요약",
   "content": "마크다운 형식 본문 (1500-2500자)",
   "tags": ["태그1", "태그2", "태그3", "태그4", "태그5"],
@@ -168,8 +170,13 @@ export function generateContentPrompt(
 - 독자가 행동할 수 있는 실질적 팁 제공
 - 글 마지막에 핵심 요약 또는 체크리스트 포함
 
+**slug 규칙 (필수):**
+- 반드시 영문 소문자 + 숫자 + 하이픈(-)만 사용. 한글/특수문자 절대 금지.
+- 의미 있는 영문 단어 3~6개로 구성 (예: "mac-mini-vs-macbook-guide", "best-gangnam-cafes-2025")
+- 60자 이내, stop words 최소화
+
 반드시 JSON 형식으로 응답:
-{"title":"SEO 제목 (60자 이내)","slug":"url-slug","excerpt":"2-3문장 요약","content":"마크다운 본문","tags":["태그1","태그2","태그3"],"seoTitle":"SEO 제목","seoDescription":"메타 설명 (160자 이내)"}`
+{"title":"SEO 제목 (60자 이내)","slug":"english-kebab-case-slug","excerpt":"2-3문장 요약","content":"마크다운 본문","tags":["태그1","태그2","태그3"],"seoTitle":"SEO 제목","seoDescription":"메타 설명 (160자 이내)"}`
 
   return prompt
 }

@@ -6,7 +6,7 @@ import { getSystemInstruction, getRelevantKnowledgeContext, generateContentPromp
 import { env } from '@/lib/env';
 import { withErrorHandler, logger, createSuccessResponse, validateRequest } from '@/lib/error-handler';
 import { generateContentSchema } from '@/lib/validations';
-import { generateUniqueSlugWithTimestamp } from '@/lib/utils/slug';
+import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug';
 import { autoGenerateThumbnailUrl } from '@/lib/utils/thumbnail';
 import { searchUnsplashImage, extractImageKeywords, getOptimizedImageUrl } from '@/lib/unsplash';
 import { tagsToString } from '@/lib/utils/tags'
@@ -132,8 +132,16 @@ async function generateContentHandler(request: NextRequest): Promise<NextRespons
 
   // Step 6: Save to database as draft
   const scheduledAt = publishDate ? new Date(publishDate) : null;
-  const slug = generateUniqueSlugWithTimestamp(parsedContent.title || prompt);
   const postTitle = parsedContent.title || prompt;
+
+  // AI가 반환한 영문 슬러그를 우선 사용, 없거나 영문이 아니면 fallback
+  const aiSlug = typeof parsedContent.slug === 'string' ? parsedContent.slug : '';
+  const baseSlug = generateSlug(aiSlug || postTitle);
+  // 중복 시 -2, -3... suffix (타임스탬프 X)
+  const slug = await generateUniqueSlug(baseSlug, async (candidate) => {
+    const existing = await prisma.post.findUnique({ where: { slug: candidate }, select: { id: true } });
+    return !!existing;
+  });
 
   // Cover image: parsed → Unsplash → OG fallback
   let coverImageUrl: string = parsedContent.coverImage || '';

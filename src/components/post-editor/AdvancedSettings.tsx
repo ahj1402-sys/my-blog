@@ -18,12 +18,18 @@ interface AdvancedSettingsProps {
 
 export default function AdvancedSettings({ formData, onChange, title, isOpen, onToggle }: AdvancedSettingsProps) {
   const generateSlug = () => {
+    // 영문 케밥 케이스만 생성 (한글/특수문자는 제거됨).
+    // 한글 제목이면 결과가 비어있을 수 있으므로, 사용자가 직접 영문으로 수정하도록 안내.
     const slug = title
       .toLowerCase()
-      .replace(/[^\w\s\uAC00-\uD7A3-]/g, '')
-      .replace(/\s+/g, '-')
+      .replace(/[_\s]+/g, '-')
+      .replace(/[^a-z0-9-]+/g, '')
       .replace(/-+/g, '-')
-      .trim()
+      .replace(/^-+|-+$/g, '')
+    if (!slug) {
+      alert('영문 제목이 없어 슬러그를 자동 생성할 수 없습니다.\n저장 시 AI가 영문 슬러그를 자동 생성해 드립니다.\n또는 직접 영문 슬러그를 입력해 주세요. (예: mac-mini-vs-macbook)')
+      return
+    }
     onChange({ slug })
   }
 

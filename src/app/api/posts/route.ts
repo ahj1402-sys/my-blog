@@ -4,6 +4,8 @@ import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { withErrorHandler, logger, createSuccessResponse, ApiError, validateRequest } from '@/lib/error-handler'
 import { createPostSchema } from '@/lib/validations'
+import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug'
+import { translateTitleToEnglishSlug } from '@/lib/utils/slug-translate'
 
 export const GET = withErrorHandler(async (request: NextRequest) => {
   logger.info('Fetching all posts');
@@ -31,18 +33,25 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
 export const POST = withErrorHandler(async (request: NextRequest) => {
   const data = await validateRequest(request, createPostSchema);
 
-  // Auto-generate slug from title if not provided
-  if (!data.slug) {
-    const baseSlug = data.title
-      .toLowerCase()
-      .replace(/[^\w\s\uAC00-\uD7A3-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .trim() || `post-${Date.now()}`
-
-    // Ensure uniqueness by appending timestamp if needed
-    const existing = await prisma.post.findUnique({ where: { slug: baseSlug } })
-    data.slug = existing ? `${baseSlug}-${Date.now()}` : baseSlug
+  // 슬러그 자동 생성: 영문 케밥 케이스 + 중복 시 -2, -3 suffix
+  // 사용자가 직접 입력했다면 그 값을 정리(영문/숫자/하이픈만)해서 사용
+  if (data.slug) {
+    data.slug = generateSlug(data.slug)
+  } else {
+    // 제목에 한글이 포함된 경우 Gemini로 영문 슬러그 번역, 영문이면 그대로 슬러그화
+    let baseSlug = generateSlug(data.title)
+    const looksLikeFallback = /^post-[a-z0-9]+$/.test(baseSlug)
+    if (looksLikeFallback) {
+      // 영문/숫자가 거의 없는 한글 제목 → Gemini로 번역 시도
+      const translated = await translateTitleToEnglishSlug(data.title)
+      if (translated) {
+        baseSlug = generateSlug(translated)
+      }
+    }
+    data.slug = await generateUniqueSlug(baseSlug, async (candidate) => {
+      const existing = await prisma.post.findUnique({ where: { slug: candidate }, select: { id: true } })
+      return !!existing
+    })
   }
 
   logger.info('Creating post', {
@@ -52,7 +61,7 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
     publishedAt: data.publishedAt
   });
 
-  // Check if slug already exists
+  // 사용자가 직접 입력한 슬러그가 이미 존재하면 명시적으로 충돌 에러
   const existingPost = await prisma.post.findUnique({
     where: { slug: data.slug }
   });
