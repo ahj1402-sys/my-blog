@@ -30,8 +30,8 @@ export default function PageLayout({ locale, currentPath, children }: PageLayout
                 href={item.href}
                 className={`text-sm font-medium pb-2 ${
                   currentPath === item.href
-                    ? 'text-gray-900 border-b-2 border-gray-900' 
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'nav-link-gradient-active border-b-2 border-blue-600'
+                    : 'nav-link-gradient'
                 }`}
               >
                 {item.label}
