@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic"
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { verifyAdminAuth } from '@/lib/auth'
 
@@ -38,7 +39,10 @@ export async function PATCH(
       where: { id },
       data: updateData,
     })
-    
+
+    // ISR 캐시 무효화: 수정 즉시 공개 페이지에 반영
+    revalidatePath('/', 'layout')
+
     return NextResponse.json(post)
   } catch (error) {
     console.error('Error updating post:', error)
@@ -65,7 +69,10 @@ export async function DELETE(
     await prisma.post.delete({
       where: { id },
     })
-    
+
+    // ISR 캐시 무효화: 삭제 즉시 공개 페이지에서 사라지도록
+    revalidatePath('/', 'layout')
+
     // Trigger sitemap update after deletion
     try {
       await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/sitemap/update`, {

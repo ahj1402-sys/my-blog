@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic"
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { withErrorHandler, logger, ApiError } from '@/lib/error-handler'
 import { verifyAdminAuth } from '@/lib/auth'
@@ -66,6 +67,9 @@ async function publishHandler(
     publishedAt: post.publishedAt,
     unsplashThumbnail: coverImage !== existingPost.coverImage,
   })
+
+  // ISR 캐시 무효화: 발행 즉시 공개 페이지에 반영되도록
+  revalidatePath('/', 'layout')
 
   return NextResponse.json({
     success: true,

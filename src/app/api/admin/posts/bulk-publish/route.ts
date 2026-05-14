@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic"
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { withErrorHandler, logger, ApiError } from '@/lib/error-handler'
 import { verifyAdminAuth } from '@/lib/auth'
@@ -89,6 +90,11 @@ async function bulkPublishHandler(request: NextRequest) {
     skipped: skippedCount,
     errors: errorCount
   })
+
+  // ISR 캐시 무효화: 발행된 글이 있다면 공개 페이지에 즉시 반영
+  if (successCount > 0) {
+    revalidatePath('/', 'layout')
+  }
 
   return NextResponse.json({
     success: true,

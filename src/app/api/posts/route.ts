@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic"
 import { NextRequest } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { withErrorHandler, logger, createSuccessResponse, ApiError, validateRequest } from '@/lib/error-handler'
 import { createPostSchema } from '@/lib/validations'
@@ -87,6 +88,11 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
     } catch (error) {
       logger.error('Failed to trigger sitemap update', error, { postId: post.id });
     }
+  }
+
+  // ISR 캐시 무효화: 발행 상태로 생성됐다면 공개 페이지에 즉시 반영
+  if (post.status === 'PUBLISHED') {
+    revalidatePath('/', 'layout')
   }
 
   logger.info('Post created successfully', { postId: post.id, slug: post.slug });
