@@ -149,7 +149,8 @@ export const getAllKnowledgeContext = getRelevantKnowledgeContext
 export function generateContentPrompt(
   userInput: string,
   keywords?: string[],
-  draftOutline?: string
+  draftOutline?: string,
+  personalStory?: string
 ): string {
   let prompt = `다음 주제로 블로그 글을 작성해주세요: ${userInput}\n`
 
@@ -159,6 +160,27 @@ export function generateContentPrompt(
 
   if (draftOutline && draftOutline.trim()) {
     prompt += `\n초안/개요:\n${draftOutline}\n\n위 초안을 참고하여 완성된 글을 작성해주세요.\n`
+  }
+
+  if (personalStory && personalStory.trim()) {
+    prompt += `
+
+**작성자의 개인 경험/멘트 (사람 냄새 나는 부분):**
+아래는 글쓴이가 직접 적은 개인적 경험·일화·생각입니다. 이 내용을 글 본문에 **자연스럽게 녹여넣어** AI 티가 나지 않게 만들어 주세요.
+
+규칙:
+- 글의 적절한 위치(서론·중간 사례·결론 중 가장 어울리는 곳)에 1인칭 톤으로 통합
+- 원문 표현·뉘앙스를 최대한 살리되, 어색하면 자연스럽게 다듬기
+- 별도 박스/인용구로 분리하지 말고 본문 흐름에 녹이기
+- 적절한 위치에 "## 제가 직접 겪어본 이야기" 같은 H2 섹션을 만들어도 좋고, 본문 중간에 자연스럽게 한 문단으로 녹여도 됨 (글의 결에 맞춰 판단)
+- 절대로 그대로 복붙하지 말 것 — 글 전체 톤과 어울리게 리라이팅
+
+작성자 입력:
+"""
+${personalStory.trim()}
+"""
+
+`
   }
 
   prompt += `

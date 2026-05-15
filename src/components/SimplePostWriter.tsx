@@ -20,6 +20,8 @@ export default function SimplePostWriter() {
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([])
   const [draftOutline, setDraftOutline] = useState('')
   const [showOutline, setShowOutline] = useState(false)
+  const [personalStory, setPersonalStory] = useState('')
+  const [showPersonalStory, setShowPersonalStory] = useState(false)
   const [generatedPostId, setGeneratedPostId] = useState<string | null>(null)
   const [generationStatus, setGenerationStatus] = useState<'idle' | 'generating' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
@@ -59,6 +61,7 @@ export default function SimplePostWriter() {
           keywords: selectedKeywords.length > 0 ? selectedKeywords : undefined,
           draftOutline: draftOutline.trim() || undefined,
           coupangLink: formData.coupangLink || undefined,
+          personalStory: personalStory.trim() || undefined,
         }),
       })
 
@@ -266,6 +269,47 @@ export default function SimplePostWriter() {
                 disabled={generationStatus === 'generating'}
                 className="mt-2 w-full px-4 py-3 text-sm rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-200 resize-none"
               />
+            )}
+          </div>
+
+          {/* Optional personal story / human-touch toggle */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setShowPersonalStory(!showPersonalStory)}
+              className="text-sm text-emerald-700 hover:text-emerald-900 flex items-center gap-1"
+            >
+              <svg className={`w-3 h-3 transition-transform ${showPersonalStory ? 'rotate-90' : ''}`} fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+              </svg>
+              사람 냄새 나는 개인 경험·일화 추가하기 (AI 티 줄이기)
+            </button>
+            {showPersonalStory && (
+              <div className="mt-2 rounded-xl border-2 border-emerald-200 bg-emerald-50/40 p-4 space-y-2">
+                <p className="text-xs text-emerald-800 leading-relaxed">
+                  여기에 적은 내용은 AI가 글에 <strong>자연스럽게 녹여서</strong> 1인칭 경험담처럼 풀어줍니다.
+                  형식은 자유 — 아래 템플릿은 예시일 뿐이고 다른 내용도 OK.
+                </p>
+                <textarea
+                  value={personalStory}
+                  onChange={e => setPersonalStory(e.target.value)}
+                  placeholder={`## 제가 직접 겪어본 이야기
+
+서론 → 종결 구조로 200~400자:
+
+- 언제, 어떤 상황에서
+- 어떤 문제가 있었는지
+- 어떻게 시도했는지
+- 결과가 어떠했는지
+
+(자유 형식. 메모처럼 적어도 AI가 다듬어줍니다.)`}
+                  rows={10}
+                  maxLength={5000}
+                  disabled={generationStatus === 'generating'}
+                  className="w-full px-4 py-3 text-sm rounded-xl border border-emerald-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200 resize-y bg-white font-normal whitespace-pre-wrap"
+                />
+                <p className="text-xs text-gray-400 text-right">{personalStory.length}/5000자</p>
+              </div>
             )}
           </div>
 

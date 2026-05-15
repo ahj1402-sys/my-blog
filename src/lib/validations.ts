@@ -50,6 +50,8 @@ export const generateContentSchema = z.object({
   publishDate: z.string().datetime().optional(),
   draftOutline: z.string().max(5000).optional(),
   coupangLink: z.string().max(5000).optional(),
+  // 작성자가 직접 적은 개인 경험/일화/멘트 — AI가 글에 자연스럽게 녹여넣음
+  personalStory: z.string().max(5000).optional(),
 });
 
 // 파일 업로드 검증

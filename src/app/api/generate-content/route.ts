@@ -27,7 +27,7 @@ const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY || '');
 async function generateContentHandler(request: NextRequest): Promise<NextResponse> {
   // Validate input data
   const validatedData = await validateRequest(request, generateContentSchema);
-  const { prompt, keywords, publishDate, draftOutline, coupangLink } = validatedData;
+  const { prompt, keywords, publishDate, draftOutline, coupangLink, personalStory } = validatedData;
   const normalizedCoupangUrl = coupangLink ? extractCoupangUrl(coupangLink) : '';
   const coupangEmbed = coupangLink ? sanitizeCoupangEmbed(coupangLink) : '';
   const hasCoupangInput = !!coupangLink?.trim();
@@ -37,6 +37,7 @@ async function generateContentHandler(request: NextRequest): Promise<NextRespons
     keywordsCount: keywords?.length || 0,
     hasDraftOutline: !!draftOutline,
     hasCoupangLink: hasCoupangInput,
+    hasPersonalStory: !!personalStory?.trim(),
   });
 
   if (hasCoupangInput && !isCoupangPartnerInput(coupangLink || '')) {
@@ -51,11 +52,11 @@ async function generateContentHandler(request: NextRequest): Promise<NextRespons
 
   // Step 2: 지식 파일 컨텍스트 로드
   const knowledgeContext = await getRelevantKnowledgeContext(
-    [prompt, keywords?.join(' '), draftOutline].filter(Boolean).join('\n')
+    [prompt, keywords?.join(' '), draftOutline, personalStory].filter(Boolean).join('\n')
   );
 
   // Step 3: 프롬프트 조합
-  let userPrompt = generateContentPrompt(prompt, keywords, draftOutline);
+  let userPrompt = generateContentPrompt(prompt, keywords, draftOutline, personalStory);
 
   // 쿠팡 링크가 있으면 쿠팡 프롬프트 추가
   if (hasCoupangInput) {
