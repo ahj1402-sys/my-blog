@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma'
 
 const KNOWLEDGE_DIR = path.join(process.cwd(), 'knowledge')
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
-const UPLOAD_EXTENSIONS = ['.txt', '.pdf']
+const UPLOAD_EXTENSIONS = ['.txt', '.pdf', '.md']
 const EDIT_EXTENSIONS = ['.md', '.txt']
 
 async function ensureDir() {
@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
  * POST /api/admin/knowledge
  * 지식 파일 생성/수정
  * - JSON 모드: { filename, content } — .md, .txt 인라인 에디터
- * - FormData 모드: file 필드로 PDF/TXT 업로드 (5MB 제한, DB 아카이빙)
+ * - FormData 모드: file 필드로 PDF/TXT/MD 업로드 (5MB 제한, DB 아카이빙)
  */
 export async function POST(request: NextRequest) {
   await ensureDir()
@@ -155,7 +155,7 @@ export async function POST(request: NextRequest) {
 
       if (!UPLOAD_EXTENSIONS.includes(ext)) {
         return NextResponse.json(
-          { error: '.txt, .pdf 파일만 업로드할 수 있습니다.' },
+          { error: '.txt, .md, .pdf 파일만 업로드할 수 있습니다.' },
           { status: 400 }
         )
       }

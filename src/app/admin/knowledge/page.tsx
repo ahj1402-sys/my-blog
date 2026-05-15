@@ -90,7 +90,7 @@ export default function KnowledgePage() {
     fetchFiles()
   }, [])
 
-  // 파일 업로드 (PDF/TXT)
+  // 파일 업로드 (PDF/TXT/MD)
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadFiles = e.target.files
     if (!uploadFiles) return
@@ -106,8 +106,8 @@ export default function KnowledgePage() {
         continue
       }
 
-      if (ext !== 'pdf' && ext !== 'txt') {
-        alert(`"${file.name}" 파일은 업로드할 수 없습니다. PDF 또는 TXT 파일만 지원합니다.`)
+      if (ext !== 'pdf' && ext !== 'txt' && ext !== 'md') {
+        alert(`"${file.name}" 파일은 업로드할 수 없습니다. PDF, TXT, MD 파일만 지원합니다.`)
         continue
       }
 
@@ -271,7 +271,7 @@ export default function KnowledgePage() {
                 {uploading ? '업로드 중...' : '파일 업로드'}
                 <input
                   type="file"
-                  accept=".txt,.pdf"
+                  accept=".txt,.md,.pdf"
                   multiple
                   onChange={handleFileUpload}
                   className="hidden"
@@ -294,7 +294,7 @@ export default function KnowledgePage() {
               </button>
             </div>
             <p className="mt-2 text-sm text-gray-500">
-              .txt, .pdf 파일만 업로드할 수 있습니다 (5MB 제한). 업로드된 파일은 지식 자료로 아카이빙되어 다음 AI 글 생성부터 참고됩니다.
+              .txt, .md, .pdf 파일만 업로드할 수 있습니다 (5MB 제한). 업로드된 파일은 지식 자료로 아카이빙되어 다음 AI 글 생성부터 참고됩니다.
             </p>
           </div>
 
