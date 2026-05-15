@@ -71,7 +71,6 @@ export default function CornerstoneListPage() {
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">제목</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">묶인 글</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">조회수</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">발행일</th>
                 <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">액션</th>
               </tr>
@@ -96,7 +95,6 @@ export default function CornerstoneListPage() {
                     )}
                   </td>
                   <td className="px-4 py-3 text-sm text-gray-700">{c.spokeCount}편</td>
-                  <td className="px-4 py-3 text-sm text-gray-700">{c.views.toLocaleString()}</td>
                   <td className="px-4 py-3 text-sm text-gray-500">
                     {c.publishedAt
                       ? new Date(c.publishedAt).toLocaleDateString('ko-KR')

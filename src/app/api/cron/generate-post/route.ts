@@ -21,6 +21,7 @@ import {
 import { autoGenerateThumbnailUrl } from '@/lib/utils/thumbnail'
 import { tagsToString } from '@/lib/utils/tags'
 import { unwrapContent } from '@/lib/utils/content'
+import { getDefaultPostAuthor } from '@/lib/settings'
 
 const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY || '')
 
@@ -140,6 +141,7 @@ async function handler(request: NextRequest) {
 
   // 6. 즉시 PUBLISHED 상태로 저장
   const now = new Date()
+  const defaultAuthor = await getDefaultPostAuthor()
   const post = await prisma.post.create({
     data: {
       title: postTitle,
@@ -152,7 +154,7 @@ async function handler(request: NextRequest) {
       coverImage: coverImageUrl,
       status: 'PUBLISHED',
       publishedAt: now,
-      author: 'AI',
+      author: defaultAuthor,
       originalLanguage: 'ko',
     },
   })

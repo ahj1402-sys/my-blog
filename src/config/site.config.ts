@@ -37,7 +37,7 @@ export const siteConfig = {
 
   /** 저자/발행자 정보 (schema.org author, publisher) */
   author: {
-    name: 'Blog Author',
+    name: '콜Cole',
     /** 'Person' = 개인 블로그, 'Organization' = 기업 블로그 */
     type: 'Person' as 'Person' | 'Organization',
     /** 저자 소개 페이지 경로 (schema.org author.url에 사용) */

@@ -33,7 +33,7 @@ export const featuresConfig = {
   serviceWorker: false,
 
   /** 조회수 카운터 */
-  viewCounter: true,
+  viewCounter: false,
 
   /** 다국어 지원 (false면 defaultLocale만 사용) */
   i18n: false,

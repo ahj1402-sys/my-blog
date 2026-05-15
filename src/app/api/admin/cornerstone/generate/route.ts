@@ -17,6 +17,7 @@ import { tagsToString } from '@/lib/utils/tags'
 import { unwrapContent } from '@/lib/utils/content'
 import { checkGeminiRateLimit, createRateLimitResponse } from '@/lib/rate-limit'
 import { verifyAdminAuth } from '@/lib/auth'
+import { getDefaultPostAuthor } from '@/lib/settings'
 
 const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY || '')
 
@@ -142,6 +143,7 @@ async function handler(request: NextRequest): Promise<NextResponse> {
   // Step 6: DRAFT 저장 + spoke 관계 미리 설정 (publish 시점에서 박스 삽입)
   const slug = generateUniqueSlugWithTimestamp(parsed.title || postTitle)
 
+  const defaultAuthor = await getDefaultPostAuthor()
   const cornerstonePost = await prisma.post.create({
     data: {
       title: postTitle,
@@ -153,7 +155,7 @@ async function handler(request: NextRequest): Promise<NextResponse> {
       seoDescription: parsed.seoDescription || parsed.excerpt || '',
       coverImage: coverImageUrl,
       status: 'DRAFT',
-      author: 'AI',
+      author: defaultAuthor,
       originalLanguage: 'ko',
       isCornerstone: true,
     },

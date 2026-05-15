@@ -13,6 +13,8 @@ export default function AdminSettingsPage() {
   const [unsplashKey, setUnsplashKey] = useState('')
   const [unsplashConfigured, setUnsplashConfigured] = useState(false)
   const [savingUnsplash, setSavingUnsplash] = useState(false)
+  const [defaultAuthor, setDefaultAuthor] = useState('')
+  const [savingAuthor, setSavingAuthor] = useState(false)
 
   useEffect(() => {
     // Load current settings
@@ -47,6 +49,14 @@ export default function AdminSettingsPage() {
       .then(res => res.json())
       .then(data => {
         if (data.value) setMetaDescription(data.value)
+      })
+      .catch(() => {})
+
+    // Load default author full value (not sensitive — show plain text)
+    fetch('/api/admin/settings/default-author')
+      .then(res => res.json())
+      .then(data => {
+        if (data.value) setDefaultAuthor(data.value)
       })
       .catch(() => {})
   }, [])
@@ -144,6 +154,33 @@ export default function AdminSettingsPage() {
       setMessage('저장 실패')
     } finally {
       setSavingUnsplash(false)
+    }
+  }
+
+  async function handleSaveDefaultAuthor() {
+    const trimmed = defaultAuthor.trim()
+    if (!trimmed) {
+      setMessage('작성자 이름을 입력하세요.')
+      return
+    }
+    setSavingAuthor(true)
+    setMessage('')
+    try {
+      const res = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ DEFAULT_POST_AUTHOR: trimmed }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setMessage(`오류: ${data.error || '저장 실패'}`)
+        return
+      }
+      setMessage('기본 작성자 이름이 저장되었습니다.')
+    } catch {
+      setMessage('저장 실패')
+    } finally {
+      setSavingAuthor(false)
     }
   }
 
@@ -298,6 +335,32 @@ export default function AdminSettingsPage() {
               ✓ 설정 완료 — 새 글 생성 시 Unsplash 썸네일이 자동 적용됩니다.
             </p>
           )}
+        </section>
+
+        {/* Default Post Author Section */}
+        <section className="mb-8 pb-8 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">기본 작성자 이름</h2>
+          <p className="text-sm text-gray-500 mb-4">
+            글 하단에 &quot;By [이름]&quot; 으로 표시됩니다. AI가 자동 생성한 글, 직접 작성한 글 모두에 적용됩니다.
+            기본값은 <span className="font-mono">콜Cole</span> 입니다.
+          </p>
+          <div className="flex items-start gap-3">
+            <input
+              type="text"
+              value={defaultAuthor}
+              onChange={(e) => setDefaultAuthor(e.target.value)}
+              placeholder="콜Cole"
+              maxLength={40}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+            />
+            <button
+              onClick={handleSaveDefaultAuthor}
+              disabled={savingAuthor}
+              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:opacity-50 whitespace-nowrap"
+            >
+              {savingAuthor ? '저장 중...' : '저장'}
+            </button>
+          </div>
         </section>
 
         {/* Meta Description Section */}

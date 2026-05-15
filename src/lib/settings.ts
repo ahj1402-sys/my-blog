@@ -16,6 +16,7 @@ const ALLOWED_KEYS = [
   'SITE_LOGO_URL',
   'SITE_META_DESCRIPTION',
   'UNSPLASH_ACCESS_KEY',
+  'DEFAULT_POST_AUTHOR',
 ] as const
 
 export type SettingKey = (typeof ALLOWED_KEYS)[number]
@@ -154,3 +155,14 @@ export function maskValue(value: string): string {
 }
 
 export { ALLOWED_KEYS }
+
+/**
+ * 글 작성자 기본값. admin 설정에서 변경 가능.
+ * 미설정이면 '콜Cole' 사용.
+ */
+export const DEFAULT_POST_AUTHOR_FALLBACK = '콜Cole'
+
+export async function getDefaultPostAuthor(): Promise<string> {
+  const value = await getSettingValue('DEFAULT_POST_AUTHOR')
+  return value?.trim() || DEFAULT_POST_AUTHOR_FALLBACK
+}

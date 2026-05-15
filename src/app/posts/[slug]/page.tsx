@@ -9,7 +9,6 @@ import RelatedPosts from '@/components/RelatedPosts'
 import TableOfContents from '@/components/TableOfContents'
 import Breadcrumb from '@/components/Breadcrumb'
 import { calculateReadingTime, formatReadingTime } from '@/lib/reading-time'
-import ViewCounter from '@/components/ViewCounter'
 import { tagsToArray } from '@/lib/utils/tags'
 import { siteConfig, brandConfig } from '@/config'
 
@@ -283,8 +282,6 @@ export default async function PostPage({
                   </time>
                   <span>•</span>
                   <span>{formatReadingTime(readingTime)}</span>
-                  <span>•</span>
-                  <ViewCounter postId={post.id} initialViews={post.views} />
                   {post.author && (
                     <>
                       <span>•</span>

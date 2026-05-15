@@ -202,7 +202,7 @@ export default function NewCornerstonePage() {
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-gray-900 truncate">{post.title}</div>
                     <div className="text-xs text-gray-500 mt-0.5">
-                      조회수 {post.views.toLocaleString()} · {post.tags || '태그 없음'}
+                      {post.tags || '태그 없음'}
                     </div>
                   </div>
                 </label>

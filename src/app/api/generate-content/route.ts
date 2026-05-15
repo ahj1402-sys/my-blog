@@ -13,6 +13,7 @@ import { tagsToString } from '@/lib/utils/tags'
 import { unwrapContent } from '@/lib/utils/content'
 import { checkGeminiRateLimit, createRateLimitResponse } from '@/lib/rate-limit';
 import { verifyAdminAuth } from '@/lib/auth';
+import { getDefaultPostAuthor } from '@/lib/settings';
 import {
   COUPANG_DISCLAIMER_MARKDOWN,
   COUPANG_DISCLAIMER_TEXT,
@@ -161,6 +162,7 @@ async function generateContentHandler(request: NextRequest): Promise<NextRespons
     coverImageUrl = autoGenerateThumbnailUrl(postTitle, request);
   }
 
+  const defaultAuthor = await getDefaultPostAuthor();
   const post = await prisma.post.create({
     data: {
       title: postTitle,
@@ -173,7 +175,7 @@ async function generateContentHandler(request: NextRequest): Promise<NextRespons
       coverImage: coverImageUrl,
       status: 'DRAFT',
       scheduledAt,
-      author: 'AI',
+      author: defaultAuthor,
       originalLanguage: 'ko'
     }
   });

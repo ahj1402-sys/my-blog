@@ -327,9 +327,6 @@ export function AdminPostsTable({ posts: initialPosts }: AdminPostsTableProps) {
                 상태
               </th>
               <th className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
-                조회수
-              </th>
-              <th className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">
                 액션
               </th>
             </tr>
@@ -394,9 +391,6 @@ export function AdminPostsTable({ posts: initialPosts }: AdminPostsTableProps) {
                         초안
                       </span>
                     )}
-                  </td>
-                  <td className="px-3 py-4 text-sm text-gray-900 text-center font-medium">
-                    {post.views}
                   </td>
                   <td className="px-3 py-4 text-sm text-center">
                     <div className="flex items-center justify-center gap-3">

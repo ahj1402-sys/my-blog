@@ -134,8 +134,6 @@ export default function RelatedPosts({ postId }: RelatedPostsProps) {
                     year: 'numeric'
                   })}
                 </time>
-                <span className="mx-2">•</span>
-                <span>{post.views} views</span>
               </div>
             </article>
           </Link>

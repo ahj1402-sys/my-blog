@@ -125,9 +125,6 @@ export default function PopularPosts() {
                 <h3 className="font-medium text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
                   {post.title}
                 </h3>
-                <div className="text-sm text-gray-500 mt-1">
-                  {post.views.toLocaleString()} views
-                </div>
               </div>
             </Link>
           ))}
