@@ -25,7 +25,9 @@ export const tagsSchema = z
     }
     return val;
   })
-  .refine((tags) => tags.length >= 1, { message: 'At least one tag is required' })
+  // 빈 배열 허용 — 사용자가 태그 없이 글을 발행/저장할 수 있어야 함.
+  // (이전엔 `length >= 1` 강제가 있어서 PUT 발행 시 400 으로 떨어지고
+  //  결과적으로 status 가 DRAFT 인 채로 남던 버그가 있었음)
   .refine((tags) => tags.length <= 10, { message: 'Maximum 10 tags allowed' });
 
 // Post 검증 스키마

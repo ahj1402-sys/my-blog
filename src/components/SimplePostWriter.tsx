@@ -101,22 +101,26 @@ export default function SimplePostWriter() {
 
   const handleSave = async (publish: boolean) => {
     setIsSubmitting(true)
+    setErrorMessage('')
 
     try {
       // 체크박스("바로 발행하기")가 켜져 있으면 어떤 버튼이든 발행 처리
       const shouldPublish = publish || !!formData.publishedAt
       const publishedAt = shouldPublish ? new Date().toISOString() : null
-      const body = {
+      const tagsArr = formData.tags.split(',').map(t => t.trim()).filter(Boolean)
+      const coverImage = formData.coverImage?.trim()
+      const body: Record<string, unknown> = {
         title: formData.title,
-        slug: formData.slug || undefined,
         content: formData.content,
-        excerpt: formData.excerpt || undefined,
-        coverImage: formData.coverImage || undefined,
-        tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
-        seoTitle: formData.seoTitle || undefined,
-        seoDescription: formData.seoDescription || undefined,
         publishedAt,
       }
+      if (formData.slug?.trim()) body.slug = formData.slug.trim()
+      if (formData.excerpt?.trim()) body.excerpt = formData.excerpt.trim()
+      if (coverImage && /^https?:\/\//i.test(coverImage)) body.coverImage = coverImage
+      // 태그가 비어 있으면 아예 보내지 않는다 (서버 schema가 빈 배열을 거부함)
+      if (tagsArr.length > 0) body.tags = tagsArr
+      if (formData.seoTitle?.trim()) body.seoTitle = formData.seoTitle.trim()
+      if (formData.seoDescription?.trim()) body.seoDescription = formData.seoDescription.trim()
 
       let response: Response
 
@@ -128,7 +132,8 @@ export default function SimplePostWriter() {
           body: JSON.stringify(body),
         })
       } else {
-        // Create new post (manual creation without AI)
+        // Create new post (manual creation without AI) — POST 는 tags 필수
+        if (!body.tags) body.tags = ['일반']
         response = await fetch('/api/posts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -139,12 +144,17 @@ export default function SimplePostWriter() {
       if (response.ok) {
         router.push('/admin')
       } else {
-        const err = await response.json()
-        setErrorMessage(err.message || err.error || '저장에 실패했습니다.')
+        const err = await response.json().catch(() => ({}))
+        const msg = err.message || err.error || '저장에 실패했습니다.'
+        setErrorMessage(msg)
+        // 인라인 에러 메시지가 화면 상단에 있어 못 볼 수 있으니 alert 도 띄움
+        alert(`저장 실패: ${msg}`)
       }
     } catch (error) {
       console.error('Save error:', error)
-      setErrorMessage('저장에 실패했습니다.')
+      const msg = error instanceof Error ? error.message : '저장에 실패했습니다.'
+      setErrorMessage(msg)
+      alert(`저장 실패: ${msg}`)
     } finally {
       setIsSubmitting(false)
     }

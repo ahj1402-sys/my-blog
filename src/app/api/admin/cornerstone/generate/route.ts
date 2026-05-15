@@ -14,7 +14,7 @@ import { generateUniqueSlugWithTimestamp } from '@/lib/utils/slug'
 import { autoGenerateThumbnailUrl } from '@/lib/utils/thumbnail'
 import { searchUnsplashImage, extractImageKeywords, getOptimizedImageUrl } from '@/lib/unsplash'
 import { tagsToString } from '@/lib/utils/tags'
-import { unwrapContent } from '@/lib/utils/content'
+import { unwrapContent, parseAIResponse } from '@/lib/utils/content'
 import { checkGeminiRateLimit, createRateLimitResponse } from '@/lib/rate-limit'
 import { verifyAdminAuth } from '@/lib/auth'
 import { getDefaultPostAuthor } from '@/lib/settings'
@@ -108,22 +108,12 @@ async function handler(request: NextRequest): Promise<NextResponse> {
     seoDescription?: string
     coverImage?: string
   }
-  let parsed: ParsedCornerstone
-  try {
-    let jsonText = responseText.trim()
-    if (jsonText.startsWith('```json')) {
-      jsonText = jsonText.replace(/^```json\s*/, '').replace(/\s*```$/, '')
-    } else if (jsonText.startsWith('```')) {
-      jsonText = jsonText.replace(/^```\s*/, '').replace(/\s*```$/, '')
-    }
-    parsed = JSON.parse(jsonText)
-  } catch {
-    parsed = {
-      title: `${body.mainKeyword} 완벽 가이드`,
-      content: responseText,
-      excerpt: responseText.substring(0, 160),
-      tags: [body.mainKeyword, '코너스톤'],
-    }
+  const parsed: ParsedCornerstone = parseAIResponse(responseText)
+  if (!parsed.title) parsed.title = `${body.mainKeyword} 완벽 가이드`
+  if (!parsed.content) parsed.content = responseText
+  if (!parsed.excerpt) parsed.excerpt = (parsed.content || '').substring(0, 160)
+  if (!Array.isArray(parsed.tags) || parsed.tags.length === 0) {
+    parsed.tags = [body.mainKeyword, '코너스톤']
   }
 
   // Step 5: 커버 이미지

@@ -20,7 +20,7 @@ import {
 } from '@/lib/unsplash'
 import { autoGenerateThumbnailUrl } from '@/lib/utils/thumbnail'
 import { tagsToString } from '@/lib/utils/tags'
-import { unwrapContent } from '@/lib/utils/content'
+import { unwrapContent, parseAIResponse } from '@/lib/utils/content'
 import { getDefaultPostAuthor } from '@/lib/settings'
 
 const genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY || '')
@@ -90,23 +90,11 @@ async function handler(request: NextRequest) {
     seoTitle?: string
     seoDescription?: string
   }
-  try {
-    let jsonText = responseText.trim()
-    if (jsonText.startsWith('```json')) {
-      jsonText = jsonText.replace(/^```json\s*/, '').replace(/\s*```$/, '')
-    } else if (jsonText.startsWith('```')) {
-      jsonText = jsonText.replace(/^```\s*/, '').replace(/\s*```$/, '')
-    }
-    parsed = JSON.parse(jsonText)
-  } catch {
-    // JSON 파싱 실패 시 폴백
-    parsed = {
-      title: keyword.text,
-      content: responseText,
-      excerpt: responseText.substring(0, 160),
-      tags: [keyword.text],
-    }
-  }
+  parsed = parseAIResponse(responseText)
+  if (!parsed.title) parsed.title = keyword.text
+  if (!parsed.content) parsed.content = responseText
+  if (!parsed.excerpt) parsed.excerpt = (parsed.content || '').substring(0, 160)
+  if (!Array.isArray(parsed.tags) || parsed.tags.length === 0) parsed.tags = [keyword.text]
 
   const postTitle = parsed.title || keyword.text
 

@@ -10,7 +10,7 @@ import { generateSlug, generateUniqueSlug } from '@/lib/utils/slug';
 import { autoGenerateThumbnailUrl } from '@/lib/utils/thumbnail';
 import { searchUnsplashImage, extractImageKeywords, getOptimizedImageUrl } from '@/lib/unsplash';
 import { tagsToString } from '@/lib/utils/tags'
-import { unwrapContent } from '@/lib/utils/content'
+import { unwrapContent, parseAIResponse } from '@/lib/utils/content'
 import { checkGeminiRateLimit, createRateLimitResponse } from '@/lib/rate-limit';
 import { verifyAdminAuth } from '@/lib/auth';
 import { getDefaultPostAuthor } from '@/lib/settings';
@@ -83,36 +83,15 @@ async function generateContentHandler(request: NextRequest): Promise<NextRespons
   const responseText = result.response.text();
   logger.info('Response text length', { length: responseText.length });
 
-  // Step 5: Parse the generated content
-  let parsedContent;
-  try {
-    let jsonText = responseText.trim();
-    if (jsonText.startsWith('```json')) {
-      jsonText = jsonText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-    } else if (jsonText.startsWith('```')) {
-      jsonText = jsonText.replace(/^```\s*/, '').replace(/\s*```$/, '');
-    }
-
-    parsedContent = JSON.parse(jsonText);
-
-    if (parsedContent.content && typeof parsedContent.content === 'string') {
-      // Content is already extracted correctly
-    } else if (typeof parsedContent === 'object' && !parsedContent.content) {
-      parsedContent = {
-        title: parsedContent.title || prompt.substring(0, 60),
-        content: responseText,
-        excerpt: parsedContent.excerpt || responseText.substring(0, 160),
-        tags: parsedContent.tags || keywords || []
-      };
-    }
-  } catch {
-    parsedContent = {
-      title: prompt.substring(0, 60),
-      content: responseText,
-      excerpt: responseText.substring(0, 160),
-      tags: keywords || []
-    };
+  // Step 5: Parse the generated content (handles ```json fence + invalid JSON)
+  const parsedContent: Record<string, any> = parseAIResponse(responseText)
+  if (!parsedContent.title) parsedContent.title = prompt.substring(0, 60)
+  if (!parsedContent.content || typeof parsedContent.content !== 'string') {
+    parsedContent.content = responseText
+    logger.warn('AI response had no parseable content — falling back to raw text')
   }
+  if (!parsedContent.excerpt) parsedContent.excerpt = parsedContent.content.substring(0, 160)
+  if (!Array.isArray(parsedContent.tags)) parsedContent.tags = keywords || []
 
   // Step 5b: 쿠팡 면책 문구 강제 삽입 (AI가 빠뜨릴 경우 안전장치)
   if (hasCoupangInput && parsedContent.content) {
