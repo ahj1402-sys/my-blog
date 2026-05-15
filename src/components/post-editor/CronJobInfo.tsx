@@ -19,7 +19,7 @@ export default function CronJobInfo() {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold text-blue-900">자동 발행 시스템 작동 중</p>
-          <p className="text-xs text-blue-600 mt-0.5">매일 오전 9시 ~ 밤 9시, 1시간 간격으로 13편 자동 생성·발행 (Vercel Cron)</p>
+          <p className="text-xs text-blue-600 mt-0.5">GitHub Actions가 매시간 (KST 9~21시) AI 글 자동 생성·발행. Vercel Cron 백업 1편/일.</p>
         </div>
         <svg
           className={`w-4 h-4 text-blue-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
@@ -54,7 +54,7 @@ export default function CronJobInfo() {
               <div>
                 <p className="text-sm font-medium text-gray-900">자동 글 생성 & 발행</p>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  Vercel Cron이 매시간 (9시~21시) 저장된 키워드 1개를 골라 AI로 글을 생성하고 즉시 발행합니다. 하루 최대 13편.
+                  GitHub Actions 워크플로(`.github/workflows/auto-publish.yml`)가 매시간 키워드 1개를 골라 AI로 글을 생성·발행합니다. KST 9~21시(UTC 0~12시)에 하루 최대 13편.
                 </p>
               </div>
             </div>
@@ -74,7 +74,9 @@ export default function CronJobInfo() {
             <div className="mt-4 p-3 bg-white rounded-lg border border-blue-100">
               <p className="text-xs text-gray-500">
                 <span className="font-medium text-gray-700">발행 스케줄 변경이 필요한가요?</span><br />
-                Claude Code에서 &quot;vercel.json의 cron 스케줄을 0 9-21 * * * 로 바꿔줘&quot; 처럼 요청하세요.
+                Claude Code에서 &quot;.github/workflows/auto-publish.yml 의 cron을 0 0,6,12 * * * 로 바꿔줘&quot; 처럼 요청하세요.
+                <br />
+                <span className="text-gray-400">Vercel Hobby는 cron 하루 1회 제한이라 무료 매시간 발행은 GitHub Actions가 담당합니다.</span>
               </p>
             </div>
           </div>

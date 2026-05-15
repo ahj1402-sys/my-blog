@@ -6,7 +6,7 @@
   "crons": [
     {
       "path": "/api/cron/generate-post",
-      "schedule": "0 9-21 * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
