@@ -61,7 +61,7 @@ export const siteConfig = {
 
   /** 검색엔진 사이트 인증 코드 (빈 문자열이면 meta 태그 렌더링 안 함) */
   verification: {
-    google: '',
+    google: 'Bc5Qz9by-K21g95RuMWpaLx6qVwoOhA9adcpDBbPnbM',
     naver: '',
   },
 
