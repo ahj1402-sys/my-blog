@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-05-20 — Admin URL 복사 시 404 발생 문제 수정
+
+- **변경**:
+  - `src/components/admin/AdminPostsTable.tsx` `handleCopyUrl`:
+    - `process.env.NEXT_PUBLIC_SITE_URL` → `window.location.origin` 으로 변경
+- **이유**: `NEXT_PUBLIC_SITE_URL` 환경변수가 실제 배포 URL과 다르게 설정되면(예: `my-blog.vercel.app` vs 실제 `my-blog-ao4r.vercel.app`) 복사된 URL이 404로 연결되는 문제. 템플릿 사용자(수강생)가 환경변수 정확히 맞추기 어려우므로 코드 레벨에서 차단.
+- **검증**: `pnpm type-check` 에러 없음. admin 페이지는 `'use client'` 컴포넌트라 브라우저에서 동작 → `window.location.origin`은 항상 현재 접속한 도메인(=실제 배포 URL)을 반환.
+
+---
+
 ## 2026-05-12 — Lighthouse SEO/Performance 100점화
 
 - **변경**:
