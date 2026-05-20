@@ -11,14 +11,14 @@ export default function PageLayout({ locale, currentPath, children }: PageLayout
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-blue-900 border-b border-blue-950">
+      <header className="border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-8">
             <a href={brandConfig.logo.url || '/'} className="flex items-center">
               {brandConfig.logo.image ? (
                 <img src={brandConfig.logo.image} alt={brandConfig.logo.text} className="h-6 w-auto" />
               ) : (
-                <span className="text-2xl font-bold tracking-tight text-white">{brandConfig.logo.text}</span>
+                <span className="logo-text">{brandConfig.logo.text}</span>
               )}
             </a>
           </div>
@@ -28,10 +28,10 @@ export default function PageLayout({ locale, currentPath, children }: PageLayout
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-sm font-medium pb-2 transition-colors ${
+                className={`text-sm font-medium pb-2 ${
                   currentPath === item.href
-                    ? 'text-white border-b-2 border-white'
-                    : 'text-blue-200 hover:text-white'
+                    ? 'nav-link-gradient-active border-b-2 border-blue-600'
+                    : 'nav-link-gradient'
                 }`}
               >
                 {item.label}
