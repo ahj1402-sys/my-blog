@@ -4,6 +4,17 @@
 
 ---
 
+## 2026-05-20 — GitHub Actions 글 생성 워크플로우 silent failure 수정
+
+- **변경**: `.github/workflows/auto-publish.yml`
+  - curl에 `-L` 추가 → SITE_URL이 redirect 도메인이어도 따라감 (308 차단)
+  - 성공 판정을 `>= 500`만 실패 → `2xx 외 전부 실패`로 강화
+  - 실패 시 흔한 원인(SITE_URL 불일치, CRON_SECRET 불일치, 키워드 미등록) 출력
+- **이유**: 사용자가 workflow를 수동 실행했으나 글이 생성되지 않음. 로그 확인 결과 HTTP 308 응답(SITE_URL secret이 `my-blog.vercel.app` 같은 redirect 도메인을 가리킴) → curl이 redirect 미추종 → 글 미생성. 그런데 워크플로우는 500 미만이면 success로 처리해서 사용자가 실패를 인지하지 못함.
+- **검증**: yaml 문법 검증 통과. 수동 재실행 시 308이 그대로면 -L 덕분에 따라가서 성공하거나, 실패 시 명확한 메시지와 함께 워크플로우 실패로 표시됨.
+
+---
+
 ## 2026-05-20 — Admin 설정 페이지 401 Unauthorized 수정
 
 - **변경**: `src/app/admin/settings/page.tsx`
