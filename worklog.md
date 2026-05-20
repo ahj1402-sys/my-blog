@@ -4,6 +4,18 @@
 
 ---
 
+## 2026-05-20 — Admin 설정 페이지 401 Unauthorized 수정
+
+- **변경**: `src/app/admin/settings/page.tsx`
+  - 인증 패턴을 codebase 표준(`sessionStorage` + `?password=` query param)으로 통일
+  - GET 3개 (settings, meta-description, default-author) — 기존엔 존재하지 않는 `document.cookie` 읽음 → `sessionStorage`로 변경
+  - POST 5개 (settings 저장 3개 + favicon/logo 업로드 2개) — 기존엔 인증 헤더 자체가 없음 → `?password=` 추가
+  - `getAdminPasswordOrPrompt()` 헬퍼 추가 (sessionStorage 비어 있으면 prompt)
+- **이유**: 설정 페이지에서 "기본 작성자 이름" 저장 시 `POST /api/admin/settings` 401. POST 요청들이 인증 정보를 아예 안 보내고 있었음. GET도 `document.cookie`를 읽고 있었는데, 로그인은 `sessionStorage`에 저장하므로 cookie는 항상 비어 있어서 작동한 적이 없음.
+- **검증**: `pnpm type-check` 에러 없음. `AdminPostsTable.tsx`와 동일한 패턴이라 일관성 확보.
+
+---
+
 ## 2026-05-20 — Admin URL 복사 시 404 발생 문제 수정
 
 - **변경**:
