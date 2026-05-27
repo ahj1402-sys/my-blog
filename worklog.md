@@ -4,6 +4,13 @@
 
 ---
 
+## 2026-05-27 — SEO/접근성: not-found description + 작업목록 체크박스 라벨 경고 제거
+
+- **변경**:
+  - `src/app/posts/[slug]/page.tsx`: "Post Not Found" 분기에도 `description`(사이트 기본 설명) 추가 — 없는 글 측정 시 메타 디스크립션 누락 경고 방지
+  - `src/components/MarkdownContent.tsx`: `input` 렌더러 추가 — GFM 작업목록 체크박스(비활성·장식용)에 `aria-hidden`+`tabIndex=-1` 부여
+- **이유**: Lighthouse 접근성 "form elements do not have associated labels"가 본문 마크다운의 `- [ ]` 체크박스 때문에 발생. 라이브 글 페이지 자체는 메타 디스크립션 정상이었으나, not-found 분기는 description이 없어 보강.
+- **검증**: `pnpm type-check` 통과(에러 0).
 ## 2026-05-27 — GitHub Actions 정리: 죽은 워크플로우 삭제 + Hourly 503 재시도
 
 - **변경**:
