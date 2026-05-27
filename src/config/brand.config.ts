@@ -16,6 +16,17 @@ export const brandConfig = {
     url: null as string | null,
   },
 
+  /**
+   * 🎨 헤더 색상 — 여기 두 값만 바꾸면 모든 페이지 상단 헤더 색이 바뀝니다.
+   * CSS 색상값으로 입력 (예: '#ffffff' 흰색, '#1e3a8a' 남색, '#111827' 검정)
+   */
+  header: {
+    /** 헤더 배경색 */
+    background: '#1e3a8a',
+    /** 로고·메뉴 글자색 (배경이 어두우면 '#ffffff') */
+    text: '#ffffff',
+  },
+
   /** 기본 OG 이미지 (public/ 기준, 1200x630 권장) */
   ogImage: '/og-image.png',
 

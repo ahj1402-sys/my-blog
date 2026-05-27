@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-05-27 — 헤더 공용 컴포넌트화(색=config 한 곳) + 컨설팅 제거
+
+- **변경**:
+  - `src/components/SiteHeader.tsx` 신규: 공용 헤더. 색은 `brandConfig.header`(배경/글자) inline style로 적용 → 한 곳만 바꾸면 전체 반영
+  - `src/config/brand.config.ts`: `header.background`/`header.text` 추가 (이 인스턴스는 남색 `#1e3a8a` + 흰색 `#ffffff`)
+  - `src/app/[locale]/page.tsx`, `src/components/PageLayout.tsx`: 중복 인라인 헤더 제거 → `<SiteHeader>` 사용
+  - 컨설팅 제거: `src/app/[locale]/consulting/` 삭제, `features.config.ts`의 `consulting` 플래그 삭제, `middleware.ts`의 컨설팅 서브도메인 리다이렉트 블록 삭제(기능 OFF라 동작 영향 없음)
+- **이유**: 헤더가 페이지마다 4종으로 흩어져 색 변경이 어려웠음 → 공용 컴포넌트 + config 단일 제어로 수강생도 쉽게 색 변경 가능. 컨설팅은 CMA에만 필요해 제거.
+- **검증**: `pnpm type-check` 통과(에러 0). 배포 후 헤더 남색 적용 확인 예정.
+- **범위**: 공용 헤더만 통합. 글 상세(`posts/[slug]`) 헤더는 별도 구조라 이번엔 미포함.
 ## 2026-05-27 — SEO/접근성: not-found description + 작업목록 체크박스 라벨 경고 제거
 
 - **변경**:
