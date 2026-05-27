@@ -4,6 +4,11 @@
 
 ---
 
+## 2026-05-27 — 글 상세 헤더도 SiteHeader로 통합
+
+- **변경**: `src/app/[locale]/posts/[slug]/page.tsx` 의 사이트 헤더(role="banner" 인라인) → `<SiteHeader currentPath="" />` 로 교체. (글 제목 헤더 `mb-8` 는 유지). 미사용 `navigationConfig` import 제거.
+- **이유**: 글 상세 페이지도 공용 헤더 색(남색)을 따르도록 통합.
+- **검증**: `pnpm type-check` 통과(에러 0). 배포 후 글 상세 헤더 남색 확인 예정.
 ## 2026-05-27 — 헤더 공용 컴포넌트화(색=config 한 곳) + 컨설팅 제거
 
 - **변경**:
