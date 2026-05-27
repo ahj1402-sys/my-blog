@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { brandConfig, navigationConfig } from '@/config'
+import ThemeToggle from './ThemeToggle'
 
 interface SiteHeaderProps {
   /** 현재 경로 (활성 메뉴 밑줄 표시용). 예: '/', '/archive' */
@@ -28,6 +29,8 @@ export default function SiteHeader({ currentPath }: SiteHeaderProps) {
               <span className="text-2xl font-bold tracking-tight">{brandConfig.logo.text}</span>
             )}
           </a>
+          {/* 다크모드 토글 (헤더 우측) */}
+          <ThemeToggle />
         </div>
 
         {/* 네비게이션 */}

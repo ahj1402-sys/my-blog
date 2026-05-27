@@ -28,6 +28,25 @@
   }
 }
 
+/* ===== 다크 모드 (html.dark) ===== */
+/* 토글은 ThemeToggle 컴포넌트가 <html>에 .dark 클래스를 붙였다 뗀다. */
+html.dark {
+  --background: #1a1a2e;
+  --foreground: #e0e0e0;
+}
+/* 페이지 곳곳의 흰/회색 유틸리티를 다크 톤으로 덮어쓴다 */
+html.dark .bg-white { background-color: #1a1a2e !important; }
+html.dark .bg-gray-50 { background-color: #16213e !important; }
+html.dark .bg-gray-100 { background-color: #24243e !important; }
+html.dark .text-gray-900,
+html.dark .text-gray-800,
+html.dark .text-gray-700 { color: #e0e0e0 !important; }
+html.dark .text-gray-600,
+html.dark .text-gray-500 { color: #a0a3b8 !important; }
+html.dark .border-gray-200,
+html.dark .border-gray-100,
+html.dark .border-gray-300 { border-color: #2a2a4a !important; }
+
 /* Base styles */
 * {
   box-sizing: border-box;

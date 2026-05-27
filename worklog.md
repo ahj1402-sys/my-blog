@@ -4,6 +4,15 @@
 
 ---
 
+## 2026-05-27 — 다크모드 토글 (이 인스턴스 전용, 템플릿 미적용)
+
+- **변경**:
+  - `src/components/ThemeToggle.tsx` 신규: 해/달 아이콘 버튼. `<html>`에 `dark` 클래스 토글 + `localStorage('theme')` 저장.
+  - `src/components/SiteHeader.tsx`: 헤더 우측에 `<ThemeToggle />` 추가.
+  - `src/app/globals.css`: `html.dark` 규칙 — 배경 `#1a1a2e`, 글자 `#e0e0e0`. `.bg-white`/회색 유틸리티 다크 톤 덮어쓰기.
+  - `src/app/layout.tsx`: `<head>`에 깜빡임 방지 인라인 스크립트(페인트 전 저장 테마 적용).
+- **이유**: 사용자 요청. 라이트=흰 배경/검정 글자, 다크=#1a1a2e/#e0e0e0, 설정 영구 저장.
+- **검증**: `pnpm type-check` 통과(에러 0). 배포 후 토글 동작 확인 예정.
 ## 2026-05-27 — 글 상세 헤더도 SiteHeader로 통합
 
 - **변경**: `src/app/[locale]/posts/[slug]/page.tsx` 의 사이트 헤더(role="banner" 인라인) → `<SiteHeader currentPath="" />` 로 교체. (글 제목 헤더 `mb-8` 는 유지). 미사용 `navigationConfig` import 제거.
