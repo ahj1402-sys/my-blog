@@ -4,6 +4,17 @@
 
 ---
 
+## 2026-05-27 — GitHub Actions 정리: 죽은 워크플로우 삭제 + Hourly 503 재시도
+
+- **변경**:
+  - `.github/workflows/daily-content.yml` 삭제 (참조 스크립트 `scripts/daily-content-generator.js` 없음 + 스케줄 이미 비활성)
+  - `.github/workflows/daily-shorts-regeneration.yml` 삭제 (참조 스크립트 `scripts/regenerate-shorts-daily.mjs` 없음 → 매일 실패)
+  - `src/app/api/cron/generate-post/route.ts`: `generateContentWithRetry` 헬퍼 추가, Gemini `generateContent` 호출을 503/429 시 지수 백오프(2s·4s·8s, 최대 3회) 재시도로 감쌈
+- **이유**:
+  - Daily 2개는 삭제된 스크립트를 참조해 항상 실패하는 죽은 워크플로우. Shorts는 매일 빨간 X 발생.
+  - Hourly의 간헐적 실패는 설정 문제가 아니라 `gemini-2.5-flash-lite`의 일시적 503(과부하)였고 재시도가 없어 그대로 실패함. 실패 run 5건 중 4건이 503 확인.
+- **검증**: `pnpm type-check` 통과(에러 0). 워크플로우 목록은 push 후 Actions에서 Hourly 1개만 남는지 확인 필요.
+
 ## 2026-05-20 — 썸네일 다양성 + cron 500 에러 가시성 개선
 
 - **변경**:
