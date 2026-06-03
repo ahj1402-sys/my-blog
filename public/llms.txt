@@ -1,0 +1,39 @@
+# 콜잇AI
+
+> 비개발자 PM이 AI로 일하는 방식을 솔직하게 기록하는 공간.
+
+## About
+
+콜잇AI는 AI 스타트업에서 PM으로 일하는 콜(Cole)의 블로그입니다. 프로덕트 기획, 바이브코딩(AI와 대화하며 비개발자가 직접 만드는 개발), 그로스해킹을 중심으로 AI 도구 후기, PM 워크플로우, 스타트업 현실을 다룹니다. 친근한 해요체로, 추상적 주장 대신 구체적 수치와 본인 경험으로 씁니다.
+
+## Main pages
+
+- [홈](https://my-blog-ao4r.vercel.app/) : 메인 페이지
+- [About](https://my-blog-ao4r.vercel.app/about) : 작성자 소개
+- [아카이브](https://my-blog-ao4r.vercel.app/archive) : 전체 글 목록
+
+## Recent posts
+
+- [안티그래비티, 중력을 거스르는 미래 기술의 모든 것](https://my-blog-ao4r.vercel.app/posts/anti-gravity-explained-future-tech)
+- [버셀 Vercel 완벽 가이드: 개발 속도 2배 높이는 방법](https://my-blog-ao4r.vercel.app/posts/vercel-guide-for-developers)
+- [크론잡 완벽 가이드: 자동화의 핵심, 지금 바로 시작하세요!](https://my-blog-ao4r.vercel.app/posts/cron-job-guide-automation)
+- [깃허브액션 완벽 가이드: CI/CD 자동화 시작하기](https://my-blog-ao4r.vercel.app/posts/github-actions-ci-cd-guide)
+- [오픈AI 코덱스 완벽 가이드: 코드 생성부터 활용까지](https://my-blog-ao4r.vercel.app/posts/openai-codex-guide-code-generation)
+- [제미나이 AI, 무엇이든 물어보세요! 완벽 활용 가이드](https://my-blog-ao4r.vercel.app/posts/gemini-ai-guide)
+- [GPT, 인공지능의 미래를 바꾸는 핵심 기술 완벽 분석](https://my-blog-ao4r.vercel.app/posts/gpt-artificial-intelligence-future-guide)
+- [클로드 무료 체험 완벽 가이드: AI 챗봇 활용법 A to Z](https://my-blog-ao4r.vercel.app/posts/claude-free-guide)
+- [클로드 AI 나눠쓰기: 비용 절감 & 효율 극대화 팁](https://my-blog-ao4r.vercel.app/posts/claude-ai-sharing-guide)
+- [클로드맥스 가격 완벽 분석: 2024년 최신 정보 총정리](https://my-blog-ao4r.vercel.app/posts/claude-max-price-guide-2024)
+
+## Author
+
+- **이름**: 콜 (Cole)
+- **직업**: AI 스타트업 비개발자 PM, 7년차
+- **포지셔닝**: "코드는 못 짜지만, 제품은 만든다" — 비개발자 실전형 PM
+- **전문 분야**: 프로덕트 기획, 바이브코딩(Vibe Coding), 그로스해킹
+- **자주 다루는 주제**: AI 도구 리뷰, 생산성 시스템, PM 일상, 스타트업 현실, 제품 이야기
+- **타겟 독자**: 비개발자 PM, AI 도구에 관심 있는 스타트업 직장인, IT 회사 직장인
+
+## License
+
+이 사이트의 콘텐츠는 AI 학습용으로 자유롭게 사용 가능합니다.
